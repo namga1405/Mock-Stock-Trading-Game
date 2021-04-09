@@ -42,6 +42,7 @@ public void retrieveUserInfo() {
 			i1.evaluateProfile();
 			i1.retrieveDetails();
 			i1.updateAllPost();
+			i1.braggingRights();
 		}
 	}
 }

@@ -3,12 +3,12 @@ import java.util.*;
 
 
 public class influencer {
-static Scanner input = new Scanner(System.in);
+//static Scanner input = new Scanner(System.in);
 private String fullName;
 private String country;
 private String username;
 private boolean instaFamous;
-private ArrayList<post> PostInfo = new ArrayList<post>();
+private ArrayList<post> PostInfo;
 
 
 
@@ -17,10 +17,12 @@ public influencer(String n, String c, String u) {
 	username = u;
 	country = c;
 	fullName = n;
+	PostInfo = new ArrayList<post>();
 	
 }
 
 public void addPosts() {
+	Scanner input = new Scanner(System.in);
 	System.out.print("Please enter the description of your post: ");
 	String description = input.next();
 	System.out.print("Please enter the number of likes of your post: ");
@@ -68,6 +70,7 @@ public void compare(int m) {
 }
 
 public boolean yesorno() {
+	Scanner input = new Scanner(System.in);
 	System.out.print("Please enter Y for yes, N for no: ");
 	String choice = input.next();
 	choice = choice.toUpperCase();
@@ -112,6 +115,7 @@ public void updateSinglePost(int p, String d, int l) {
 }
 
 public void updateAllPost() {
+	Scanner input = new Scanner(System.in);
 	for(int i = 0; i < PostInfo.size(); i++) {
 		int count = i+1;
 		System.out.print("Please enter the description for new post #" +(i+1)+" : ");
@@ -130,7 +134,18 @@ public boolean checkInt(String i) {
 	catch(NumberFormatException e) {
 		return false;
 	}
-	
+}
+
+public void braggingRights() {
+	if (instaFamous == false) {
+		System.out.println("Who are you trying to kid?");
+		System.out.println("You've a long way to go before you can start bragging");
+	}
+	else {
+		for (int i = 0; i < PostInfo.size(); i++) {
+			System.out.println("Your post: " + PostInfo.get(i).getDescription() + " got " + PostInfo.get(i).getLikes() + " likes");
+		}
+	}
 }
 
 }
