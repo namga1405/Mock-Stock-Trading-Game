@@ -85,40 +85,50 @@ public class signupScreen extends JFrame {
 		JButton btnRegister = new JButton("Sign me up!");
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//Username type in data
 				String username = txtUser.getText();
 				String password = txtPass.getText();
 				String reenter = txtReenter.getText();
-				//Verify password 
+				//Verify password to see the repeated password is the same as the original password
 				boolean equal = password.equals(reenter);
 				if (equal != true) {
-					JOptionPane.showMessageDialog(btnRegister, "Please correctly re-enter your password");
-					signupScreen frame = new signupScreen();
-					frame.setVisible(true);
-					username = txtUser.getText();
-					password = txtPass.getText();
-					reenter = txtReenter.getText();
+					JOptionPane.showMessageDialog(null, "Please correctly re-enter your password");
 					
 				}
+				else {
 				try {
+					//Connect to the database
 					Class.forName("com.mysql.cj.jdbc.Driver");
 					Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
-					String query = "INSERT INTO user values('"+null+"','"+username+"','"+password+"')";
-					Statement sta = com.createStatement();
-					int x = sta.executeUpdate(query);
-					if (x == 0) {
-						JOptionPane.showMessageDialog(btnRegister, "This username is already taken");
-					} else {
-						JOptionPane.showMessageDialog(btnRegister, "New account made");
-						menuScreen menu = new menuScreen();
-						menu.setVisible(true);
+					//Check to see whether the username has already been taken
+					Statement stmt = com.createStatement();
+					String checkUser = "SELECT * FROM user WHERE Username='"+username+"'";
+					ResultSet usernametaken = stmt.executeQuery(checkUser);
+					if(usernametaken.next()) {
+						JOptionPane.showMessageDialog(null, "Username has been already taken");
 					}
+					else { 
+						//Add the username + password onto the database
+						String query = "INSERT INTO user(Username,Password) values('"+username+"','"+password+"')";
+						Statement sta = com.createStatement();
+						int x = sta.executeUpdate(query);
+						if (x == 0) {
+							JOptionPane.showMessageDialog(null, "This username is already taken");
+						} else {
+							JOptionPane.showMessageDialog(null, "New account made");
+							setVisible(false);
+							menuScreen menu = new menuScreen();
+							menu.setVisible(true);
+						}
+				   }
 				}
 				catch (Exception exception) {
 					exception.printStackTrace();
 				}
-				
+				}
 			}
 		});
+		
 		btnRegister.setFont(new Font("SansSerif", Font.BOLD, 15));
 		btnRegister.setBounds(51, 347, 143, 44);
 		contentPane.add(btnRegister);

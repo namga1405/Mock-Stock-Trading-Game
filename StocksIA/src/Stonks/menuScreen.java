@@ -7,16 +7,21 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 
 public class menuScreen extends JFrame {
 
 	private JPanel contentPane;
+	private JFrame exiting;
 
-	/**
-	 * Launch the application.
-	 */
+	//Launch the application.
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -30,9 +35,8 @@ public class menuScreen extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	//Create the frame.
+	
 	public menuScreen() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 600);
@@ -46,10 +50,10 @@ public class menuScreen extends JFrame {
 		lblNewLabel.setBounds(64, 26, 344, 59);
 		contentPane.add(lblNewLabel);
 		
-		JButton btnNewButton = new JButton("Purchase Stocks");
-		btnNewButton.setFont(new Font("SansSerif", Font.BOLD, 20));
-		btnNewButton.setBounds(157, 96, 383, 49);
-		contentPane.add(btnNewButton);
+		JButton btnPurchaseStocks = new JButton("Purchase Stocks");
+		btnPurchaseStocks.setFont(new Font("SansSerif", Font.BOLD, 20));
+		btnPurchaseStocks.setBounds(157, 96, 383, 49);
+		contentPane.add(btnPurchaseStocks);
 		
 		JButton btnRanking = new JButton("Ranking");
 		btnRanking.setFont(new Font("SansSerif", Font.BOLD, 20));
@@ -66,10 +70,20 @@ public class menuScreen extends JFrame {
 		btnProfile.setBounds(157, 404, 383, 49);
 		contentPane.add(btnProfile);
 		
-		JButton btnNewButton_1 = new JButton("Log out");
-		btnNewButton_1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnNewButton_1.setBounds(522, 37, 138, 30);
-		contentPane.add(btnNewButton_1);
+		JButton btnExit = new JButton("Exit");
+		btnExit.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnExit.setBounds(522, 37, 138, 30);
+		contentPane.add(btnExit);
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Exit the program
+				exiting = new JFrame("exit");
+				if(JOptionPane.showConfirmDialog(exiting, "Confirm if you want to exit","Stonk Rush",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION) {
+					System.exit(0);
+				}
+				
+			}
+		});
 		
 	}
 

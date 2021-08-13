@@ -56,7 +56,7 @@ public class loginScreen {
 			ResultSet rs = state.executeQuery(sql);
 			if (rs.next()) {
 				JOptionPane.showMessageDialog(null, "Login successful");
-				/**Creating object to change frame*/
+				//Creating object to change frame
 				frame.dispose();
 				menuScreen menu = new menuScreen();
 				menu.setVisible(true);
@@ -108,6 +108,7 @@ public class loginScreen {
 		frame.getContentPane().add(btnLogIn);
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//Perform function
 				loginEnter();
 		};
 	});
@@ -119,6 +120,7 @@ public class loginScreen {
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					//Change to sign up screen
 					frame.dispose();
 					signupScreen signup = new signupScreen();
 					signup.setVisible(true);
