@@ -106,7 +106,7 @@ public class menuScreen extends JFrame {
 					fail.setVisible(true);
 					}
 					else {
-						PurchaseSuccessScreen success = new PurchaseSuccessScreen();
+						SuccessScreen success = new SuccessScreen();
 						success.setVisible(true);
 					}
 				}
@@ -152,3 +152,4 @@ public class menuScreen extends JFrame {
 	}
 
 }
+
