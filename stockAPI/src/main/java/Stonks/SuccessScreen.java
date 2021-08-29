@@ -54,19 +54,28 @@ public class SuccessScreen extends JFrame {
 	}
 	
 	//Get stocks from the database with selected country to put to array list
-	private ArrayList<String> getStocks(int i) {
+	private ArrayList<String> getStocks(Object object) {
 		ArrayList<String> stocks = new ArrayList<String>();
+		String i = object.toString();
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 			Statement stmt = com.createStatement();
-			//Select stocks with certain marketID
-			String retrieveStock = "SELECT Name FROM stock WHERE MarketID='"+i+"'";
-			ResultSet rs = stmt.executeQuery(retrieveStock);
+			//Retrieve marketID with where the name is matched on the combo box
+			String retrieveID = "SELECT MarketID FROM market WHERE marketName='"+i+"'";
+			ResultSet rs = stmt.executeQuery(retrieveID);
 			//Continue adding until there's non left
 			while (rs.next()) {
-				String name = rs.getString("Name");
-				stocks.add(name);
+				//Getting the ID from the market DB to query for the stock DB since the ID is essentially acting like a foreign key acessor
+				int id = rs.getInt("MarketID");
+				//Finding the list of stocks with matched ID
+				String retrieveStock = "Select Name FROM stock WHERE MarketID='"+id+"'";
+				ResultSet rs2 = stmt.executeQuery(retrieveStock);
+				while (rs2.next()) {
+					String name = rs2.getString("Name");
+					//Adding it to the array list
+					stocks.add(name);
+				}
 			}
 		}
 		catch (Exception exception) {
@@ -81,10 +90,12 @@ public class SuccessScreen extends JFrame {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 			Statement stmt = com.createStatement();
+			//Retrieve the price of the selected stock
 			String retrieveprice = "SELECT Value FROM stock WHERE Name='"+s+"'";
 			ResultSet rs = stmt.executeQuery(retrieveprice);
 			
 			if (rs.next()) {
+				//Return value to the program
 				price = rs.getDouble("Value");
 			}
 		}
@@ -157,30 +168,12 @@ public class SuccessScreen extends JFrame {
 		contentPane.add(cmbMarket);
 		cmbMarket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//If USA is picked in the cmbMarket
-				if ("USA".equals(cmbMarket.getSelectedItem())) {
-					cmbStocks.removeAllItems();
-					storeStock = getStocks(1);
-					String[] stockname = convertArray(storeStock);
-					final DefaultComboBoxModel USModel = new DefaultComboBoxModel(stockname);
-					cmbStocks.setModel(USModel);	
-				} else {
-					//If France is picked in the cmbMarket
-					if ("France".equals(cmbMarket.getSelectedItem())) {
-						cmbStocks.removeAllItems();
-						storeStock = getStocks(2);
-						String[] stockname = convertArray(storeStock);
-						final DefaultComboBoxModel FRModel = new DefaultComboBoxModel(stockname);
-						cmbStocks.setModel(FRModel);
-					} else {
-						//If Australia is picked in the cmbMarket
-						storeStock = getStocks(3);
-						cmbStocks.removeAllItems();
-						String[] stockname = convertArray(storeStock);
-						final DefaultComboBoxModel AXModel = new DefaultComboBoxModel(stockname);
-						cmbStocks.setModel(AXModel);
-					}
-				}
+				cmbStocks.removeAllItems();
+				storeStock = getStocks(cmbMarket.getSelectedItem());
+				//Change it to an array since it is required to make the the model
+				String[] stockname = convertArray(storeStock);
+				final DefaultComboBoxModel Model = new DefaultComboBoxModel(stockname);
+				cmbStocks.setModel(Model);
 					
 			}
 		});
@@ -316,3 +309,4 @@ public class SuccessScreen extends JFrame {
 		
 	}
 }
+
