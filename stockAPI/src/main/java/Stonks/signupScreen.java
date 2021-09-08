@@ -3,6 +3,9 @@ package Stonks;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -19,11 +22,12 @@ import javax.swing.JButton;
 
 public class signupScreen extends JFrame {
 
+	private JFrame frame;
 	private JPanel contentPane;
 	private JTextField txtUser;
 	private JPasswordField txtPass;
 	private JPasswordField txtReenter;
-	String User;
+
 
 	//Launch application
 	public static void main(String[] args) {
@@ -39,7 +43,12 @@ public class signupScreen extends JFrame {
 		});
 	}
 	
-
+	public String getDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		String time = sdf.format(date);
+		return time;
+	}
 
 	//Create the frame
 	public signupScreen() {
@@ -90,7 +99,7 @@ public class signupScreen extends JFrame {
 				String username = txtUser.getText();
 				String password = txtPass.getText();
 				String reenter = txtReenter.getText();
-				//Verify password to see the repeated password is the same as the original password
+				//Verify password to see the repeated password is the same as the original password by using boolean to give out true/false result
 				boolean equal = password.equals(reenter);
 				if (equal != true) {
 					JOptionPane.showMessageDialog(null, "Please correctly re-enter your password");
@@ -98,7 +107,8 @@ public class signupScreen extends JFrame {
 				}
 				else {
 				try {
-					//Connect to the database
+					/**Connect to the database by creating a connection. A statement is then given out alongside with a query which is checkUser to find whether the input value is already
+					on the database on table user, which will show whether there is a duplication of username*/
 					Class.forName("com.mysql.cj.jdbc.Driver");
 					Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 					//Check to see whether the username has already been taken
@@ -109,7 +119,7 @@ public class signupScreen extends JFrame {
 						JOptionPane.showMessageDialog(null, "Username has been already taken");
 					}
 					else { 
-						//Add the username + password onto the database
+						//If there is no duplicated username, then another query is being created to add the passwrod and username onto the table user on the database by INSERT
 						String query = "INSERT INTO user(Username,Password) values('"+username+"','"+password+"')";
 						Statement sta = com.createStatement();
 						int x = sta.executeUpdate(query);
@@ -117,9 +127,36 @@ public class signupScreen extends JFrame {
 							JOptionPane.showMessageDialog(null, "This username is already taken");
 						} else {
 							JOptionPane.showMessageDialog(null, "New account made");
-							setVisible(false);
-							menuScreen menu = new menuScreen();
-							menu.setVisible(true);
+							/**Since the UserID is an auto-incremented value on the database, it will be retrieved via the query getID so it could be put in other tables, 
+							essentially working as a foreign key*/
+							String getID = "SELECT UserID FROM user WHERE Username='"+username+"'";
+							Statement sta2 = com.createStatement();
+							ResultSet rs = sta2.executeQuery(getID);
+							while(rs.next()) {
+								int id = rs.getInt("UserID");
+								/**The query inserttoProg is made to insert the new user information into the table Progression so the data could be stored and show up when users want 
+								to check their progression*/
+								String sdf = getDate();
+								String inserttoProg = "INSERT INTO progression(UserID,Balance,UpdatedDate) values ('"+id+"','"+10000+"','"+sdf+"') ";
+								Statement sta3 = com.createStatement();
+								int y = sta3.executeUpdate(inserttoProg);
+								if (y == 0) {
+									JOptionPane.showMessageDialog(null, "Error");
+								}
+								/**This is similar to the inserttoProg but it is added to the Ranking screen so all users will show up in the ranking, with their rank being the ID
+								of the newest user also shows the number of users that they currently have*/
+								String inserttoRank = "INSERT INTO ranking(Rank,UserID,Username,Balance) values ('"+id+"','"+id+"','"+username+"','"+10000+"') ";
+								Statement sta4 = com.createStatement();
+								int z = sta4.executeUpdate(inserttoRank);
+								if (z == 0) {
+									JOptionPane.showMessageDialog(null, "Error");
+								}
+							}	
+								//After finish all, switch to login screen
+								setVisible(false);
+								loginScreen login = new loginScreen();
+								login.frame.setVisible(true);
+							
 						}
 				   }
 				}
@@ -136,4 +173,3 @@ public class signupScreen extends JFrame {
 		;
 	}
 }
-
