@@ -43,10 +43,11 @@ public class menuScreen extends JFrame {
 		});
 	}
 	
-	public String retrieveUserInfo() {
-		loginScreen log = new loginScreen();
-		String user = log.username;
-		return user;
+	public String showName(String str) {
+		String s = str;
+		String st = lblshowUser.getText();
+		lblshowUser.setText(st+": "+str);
+		return s;
 	}
 	
 		
@@ -91,11 +92,9 @@ public class menuScreen extends JFrame {
 		contentPane.setLayout(null);
 		
 		lblshowUser = new JLabel();
-		String user = retrieveUserInfo();
-		System.out.println(user);
-		lblshowUser.setText("Welcome: " +user);
-		lblshowUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 36));
-		lblshowUser.setBounds(64, 26, 344, 59);
+		lblshowUser.setText("Welcome: ");
+		lblshowUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
+		lblshowUser.setBounds(31, 19, 578, 59);
 		contentPane.add(lblshowUser);
 		
 		JButton btnPurchaseStocks = new JButton("Purchase Stocks");
