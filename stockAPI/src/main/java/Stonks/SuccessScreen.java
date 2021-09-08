@@ -90,7 +90,8 @@ public class SuccessScreen extends JFrame {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 			Statement stmt = com.createStatement();
-			//Retrieve the price of the selected stock
+			/**Retrieve the price of the selected stock by connecting to the database and using query name retrieveprice which will take the column value from the 
+			chosen stockname on the table stock*/
 			String retrieveprice = "SELECT Value FROM stock WHERE Name='"+s+"'";
 			ResultSet rs = stmt.executeQuery(retrieveprice);
 			
@@ -268,9 +269,10 @@ public class SuccessScreen extends JFrame {
 		contentPane.add(btnCheckPrice);
 		btnCheckPrice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Get the price from the selected stocks
+				//Retrieve the price from the selected stocks by using the method getPrice
 				double stockprice = getPrice((String) cmbStocks.getSelectedItem());
-				//Get the currency from the selected currency
+				/**Get the currency from the selected currency, this is done manually because there is no free API that allows to constantly update the exchange rate, which will violate
+				the legal feasibility of the project*/
 				String currency = (String) cmbCurrency.getSelectedItem();
 				if("USD".equals(currency)) {
 					exchangerate = 1;
@@ -309,4 +311,3 @@ public class SuccessScreen extends JFrame {
 		
 	}
 }
-
