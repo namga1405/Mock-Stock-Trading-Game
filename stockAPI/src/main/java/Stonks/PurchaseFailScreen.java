@@ -54,7 +54,7 @@ public class PurchaseFailScreen extends JFrame {
 						int hour = date.getHours();
 					
 						
-						//Determine value of days left
+						//Determine value of days left by using basic mathematics algorithm
 						if (day < 1) {
 							day = day;
 						} else {
@@ -70,7 +70,7 @@ public class PurchaseFailScreen extends JFrame {
 							
 						}
 						
-						//Determine value of hours left
+						//Determine value of hours left by using basic mathematics algorithm
 						if (hour < 16) {
 							hour = 15-hour;
 						}
@@ -78,6 +78,7 @@ public class PurchaseFailScreen extends JFrame {
 							hour = (24-hour)+15;
 						}
 						
+						//Setting it as a label so the users could know exactly when they could buy
 						lblTimer.setText(day+ " Day "+hour+ " Hour "+ minute+ " Minute "+ second+ " Second ");
 						}
 					}
