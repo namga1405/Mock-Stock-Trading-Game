@@ -20,11 +20,11 @@ import javax.swing.JButton;
 
 public class loginScreen {
 
-	private JFrame frame;
+	JFrame frame;
 	private JTextField txtUser;
 	private JPasswordField txtPass;
-	String username;
-	String password;
+	String username = "Bob";
+
 
 
 	/**
@@ -50,34 +50,34 @@ public class loginScreen {
 	}
 	
 	//Connect SQL and return to query
-	public void loginEnter() {
-		UserInfo userinfo = new UserInfo(username,password);
+	public String loginEnter() {
 		String user = txtUser.getText();
 		String pass = txtPass.getText();
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 			Statement state = com.createStatement();
-			
+			//Check username and password in database by creating a query name sql to check whether there is a stored data that match both the password and the username
 			@SuppressWarnings("deprecation")
 			String sql = "Select * from user where Username ='"+user+"' and Password ='"+pass.toString()+"'";
 			ResultSet rs = state.executeQuery(sql);
 			if (rs.next()) {
 				JOptionPane.showMessageDialog(null, "Login successful");
 				//Creating object to change frame
-				userinfo.setUsername(user);
 				frame.dispose();
 				menuScreen menu = new menuScreen();
 				menu.setVisible(true);
 			
 			}
 			else {
-					JOptionPane.showMessageDialog(null, "Login unsuccessful");
+					//Error message to show that password and username does not match
+					JOptionPane.showMessageDialog(null, "Password and Username doesn't match");
 				}
 			}
 			catch(Exception exc) {
 				exc.printStackTrace();
 			}
+		return user;
 	}
 
 
@@ -120,7 +120,8 @@ public class loginScreen {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Perform function
-				loginEnter();
+				username = loginEnter();
+				System.out.println(username);
 
 		};
 	});
@@ -144,5 +145,6 @@ public class loginScreen {
 		});
 		
 	}
+
 
 }
