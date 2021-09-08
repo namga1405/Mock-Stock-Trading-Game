@@ -50,7 +50,7 @@ public class loginScreen {
 	}
 	
 	//Connect SQL and return to query
-	public String loginEnter() {
+	public void loginEnter() {
 		String user = txtUser.getText();
 		String pass = txtPass.getText();
 		try {
@@ -66,6 +66,7 @@ public class loginScreen {
 				//Creating object to change frame
 				frame.dispose();
 				menuScreen menu = new menuScreen();
+				menu.showName(user);
 				menu.setVisible(true);
 			
 			}
@@ -77,7 +78,6 @@ public class loginScreen {
 			catch(Exception exc) {
 				exc.printStackTrace();
 			}
-		return user;
 	}
 
 
@@ -120,8 +120,7 @@ public class loginScreen {
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Perform function
-				username = loginEnter();
-				System.out.println(username);
+				loginEnter();
 
 		};
 	});
@@ -148,3 +147,4 @@ public class loginScreen {
 
 
 }
+
