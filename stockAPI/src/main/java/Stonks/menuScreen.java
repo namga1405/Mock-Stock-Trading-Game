@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.util.Date;
 
 
@@ -24,8 +25,7 @@ public class menuScreen extends JFrame {
 	private JFrame exiting;
 	private JLabel lblshowUser;
 	private boolean chooseFrame;
-	String username = "null";
-	String password = "null";
+
 
 
 	//Launch the application.
@@ -44,17 +44,19 @@ public class menuScreen extends JFrame {
 	}
 	
 	public String retrieveUserInfo() {
-		UserInfo userinfo = new UserInfo(username,password);
-		String user = userinfo.getUsername();
+		loginScreen log = new loginScreen();
+		String user = log.username;
 		return user;
 	}
 	
 		
 	public boolean time() {
+		//Create a continuous running clock system
 		Thread time = new Thread() {
 			public void run() {
 				try {
 					for (;;) {
+						//Create new object
 					Date cal = new Date();
 					}
 				}
@@ -63,10 +65,13 @@ public class menuScreen extends JFrame {
 				}
 			}
 		};
+		//Run the time
 		time.start();
 		Date cal = new Date();
+		//Get the required information using the preset method getHours and getDay so the hour and the day of the week is retrieve to make a time interval
 		int hour = cal.getHours();
 		int day = cal.getDay();
+		//Set up the interval by setting the day to not be Monday and the time to not be 16h to show the purchase fail screen
 		if (day != 1 || hour < 16 || hour > 16) {
 			return false;
 		}
@@ -87,6 +92,7 @@ public class menuScreen extends JFrame {
 		
 		lblshowUser = new JLabel();
 		String user = retrieveUserInfo();
+		System.out.println(user);
 		lblshowUser.setText("Welcome: " +user);
 		lblshowUser.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 36));
 		lblshowUser.setBounds(64, 26, 344, 59);
@@ -120,6 +126,18 @@ public class menuScreen extends JFrame {
 		btnRanking.setFont(new Font("SansSerif", Font.BOLD, 20));
 		btnRanking.setBounds(157, 201, 383, 49);
 		contentPane.add(btnRanking);
+		btnRanking.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					setVisible(false);
+					rankingScreen rank = new rankingScreen();
+					rank.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		});
 		
 		
 		JButton btnProgression = new JButton("Progression");
@@ -152,4 +170,3 @@ public class menuScreen extends JFrame {
 	}
 
 }
-
