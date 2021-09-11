@@ -1,0 +1,147 @@
+package Stonks;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import javax.swing.JButton;
+
+public class rankingScreen extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					rankingScreen frame = new rankingScreen();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+    public void ShowRank(JTable table){
+    	//Set up new object to the UserList method on the class UserInfo, which helps to retrieve all the data from the database required to make a table
+        ArrayList<UserInfo> list = UserInfo.UserList();
+        DefaultTableModel model = (DefaultTableModel)table.getModel();
+        for(int i = 0; i < list.size(); i++){
+           //Getting data to fill up the row by using accessor methods that are featured on UserInfo class
+           int ID = list.get(i).getId();
+           String Username = list.get(i).getUser();
+           int Ranking = list.get(i).getRank();
+           double balance = list.get(i).getBalance();
+            
+           Object tableData[] = {Ranking,Username,ID,balance};
+           model.addRow(tableData);
+            
+        }
+    }
+	/**
+	 * Create the frame.
+	 */
+	public rankingScreen() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 700, 600);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Ranking");
+		lblNewLabel.setBounds(31, 38, 205, 41);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 36));
+		contentPane.add(lblNewLabel);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(39, 117, 600, 273);
+		contentPane.add(scrollPane);
+		
+		JScrollPane scroll = new JScrollPane(table);
+		scrollPane.setViewportView(table);
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+					"Rank", "Username", "UserID", "Balance"
+			}
+		));
+		
+		JButton btnGetRanking = new JButton("Update Rank");
+		btnGetRanking.setBounds(385, 30, 152, 27);
+		btnGetRanking.setFont(new Font("SansSerif", Font.BOLD, 15));
+		contentPane.add(btnGetRanking);
+		btnGetRanking.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ShowRank(table);
+			}
+		});
+		
+		JButton btnMenu = new JButton("Menu");
+		btnMenu.setBounds(496, 425, 137, 32);
+		btnMenu.setFont(new Font("SansSerif", Font.BOLD, 15));
+		contentPane.add(btnMenu);
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					//Change to menu screen
+					setVisible(false);
+					menuScreen menu = new menuScreen();
+					menu.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		});
+		
+		JButton btnChooseUser = new JButton("Choose User");
+		btnChooseUser.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btnChooseUser.setBounds(42, 425, 137, 32);
+		contentPane.add(btnChooseUser);
+		btnChooseUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int row = table.getSelectedRow();
+					String user = table.getValueAt(row, 1).toString();
+					int ID = Integer.parseInt(table.getValueAt(row,2).toString());
+					//Change to profile screen
+					setVisible(false);
+					profileScreen profile = new profileScreen();
+					profile.showName(user);
+					profile.createArray(ID);
+					profile.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		});
+
+	}
+}
