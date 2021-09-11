@@ -134,7 +134,7 @@ public class rankingScreen extends JFrame {
 					setVisible(false);
 					profileScreen profile = new profileScreen();
 					profile.showName(user);
-					profile.createArray(ID);
+					profile.retrieveInfo(ID);
 					profile.setVisible(true);
 				}
 				catch(Exception exc) {
