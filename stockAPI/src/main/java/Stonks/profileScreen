@@ -1,0 +1,142 @@
+package Stonks;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+
+public class profileScreen extends JFrame {
+
+	private JPanel contentPane;
+	private JTable tbtStocks;
+	private JScrollPane scrollPane;
+	private JButton btnReturn;
+	private JLabel lblUser;
+	private  ArrayList<String> stockname;
+	private  ArrayList<Double> value;
+	private  ArrayList<Double> cost;
+	private  ArrayList<Integer> noBought;
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					profileScreen frame = new profileScreen();
+					frame.setVisible(true);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+
+	public void showName(String str) {
+		String s = str;
+		String st = lblUser.getText();
+		lblUser.setText(st+": "+str);
+
+	}
+	
+	
+	public void createArray(int ID) {
+		int i = ID;
+		stockname = UserInfo.getStockname(i);
+		noBought = UserInfo.getnoBought(i);
+		cost = UserInfo.getCost(i);
+		value = UserInfo.getValue(i);
+		
+	}
+
+	   public void showStocks(JTable table){
+	        DefaultTableModel model = (DefaultTableModel)table.getModel();
+	        for(int i = 0; i < stockname.size(); i++){
+	           //Getting data to fill up the row by using accessor methods that are featured on UserInfo class
+	           String Name = stockname.get(i);
+	           int Bought = noBought.get(i);
+	           double currentprice = value.get(i);
+	           double buyingprice = cost.get(i);
+	            
+	           Object tableData[] = {Name,Bought,buyingprice,currentprice};
+	           model.addRow(tableData);
+	            
+	        }
+	    }
+	/**
+	 * Create the frame.
+	 */
+	public profileScreen() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 700, 600);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		lblUser = new JLabel("User: ");
+		lblUser.setFont(new Font("SansSerif", Font.BOLD | Font.ITALIC, 15));
+		lblUser.setBounds(27, 43, 277, 35);
+		contentPane.add(lblUser);
+		
+		JButton btnShow = new JButton("Show list");
+		btnShow.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btnShow.setBounds(421, 49, 143, 27);
+		contentPane.add(btnShow);
+		btnShow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showStocks(tbtStocks);
+			}
+		});
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(27, 131, 609, 318);
+		contentPane.add(scrollPane);
+		
+		tbtStocks = new JTable();
+		scrollPane.setViewportView(tbtStocks);
+		tbtStocks.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Stocks", "Stocks bought", "Purchased Price", "Current Price"
+			}
+		));
+		
+		btnReturn = new JButton("Return");
+		btnReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					//Change to ranking screen
+					setVisible(false);
+					rankingScreen ranking = new rankingScreen();
+					ranking.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		});
+		btnReturn.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btnReturn.setBounds(27, 494, 143, 27);
+		contentPane.add(btnReturn);
+		tbtStocks.getColumnModel().getColumn(1).setPreferredWidth(97);
+	}
+}
