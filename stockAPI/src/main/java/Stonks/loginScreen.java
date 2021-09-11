@@ -23,7 +23,7 @@ public class loginScreen {
 	JFrame frame;
 	private JTextField txtUser;
 	private JPasswordField txtPass;
-	String username = "Bob";
+	String username;
 
 
 
@@ -67,6 +67,7 @@ public class loginScreen {
 				frame.dispose();
 				menuScreen menu = new menuScreen();
 				menu.showName(user);
+				menu.storeName(user);
 				menu.setVisible(true);
 			
 			}
