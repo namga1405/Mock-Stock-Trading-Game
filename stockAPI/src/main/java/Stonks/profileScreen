@@ -27,10 +27,15 @@ public class profileScreen extends JFrame {
 	private JScrollPane scrollPane;
 	private JButton btnReturn;
 	private JLabel lblUser;
-	private  ArrayList<String> stockname;
-	private  ArrayList<Double> value;
-	private  ArrayList<Double> cost;
+	private String username;
+	private int rank;
+	private double balance;
+	private ArrayList<String> stockname;
+	private ArrayList<Double> value;
+	private ArrayList<Double> cost;
 	private  ArrayList<Integer> noBought;
+	private JLabel lblRanking;
+	private JLabel lblBalance;
 	/**
 	 * Launch the application.
 	 */
@@ -56,14 +61,17 @@ public class profileScreen extends JFrame {
 
 	}
 	
-	
-	public void createArray(int ID) {
+	//Retrieve the name of stock, number of stock buy, current price and purchase price by a user and the ranking and balance of that user
+	public void retrieveInfo(int ID) {
 		int i = ID;
 		stockname = UserInfo.getStockname(i);
 		noBought = UserInfo.getnoBought(i);
 		cost = UserInfo.getCost(i);
 		value = UserInfo.getValue(i);
-		
+		int rank = UserInfo.getRankfromID(i);
+		double balance = UserInfo.getBalancefromID(i);
+		lblRanking.setText(lblRanking.getText()+" "+rank);
+		lblBalance.setText(lblBalance.getText()+" "+balance);
 	}
 
 	   public void showStocks(JTable table){
@@ -98,7 +106,7 @@ public class profileScreen extends JFrame {
 		
 		JButton btnShow = new JButton("Show list");
 		btnShow.setFont(new Font("SansSerif", Font.BOLD, 15));
-		btnShow.setBounds(421, 49, 143, 27);
+		btnShow.setBounds(493, 127, 143, 27);
 		contentPane.add(btnShow);
 		btnShow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -107,7 +115,7 @@ public class profileScreen extends JFrame {
 		});
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(27, 131, 609, 318);
+		scrollPane.setBounds(27, 165, 609, 318);
 		contentPane.add(scrollPane);
 		
 		tbtStocks = new JTable();
@@ -137,6 +145,16 @@ public class profileScreen extends JFrame {
 		btnReturn.setFont(new Font("SansSerif", Font.BOLD, 15));
 		btnReturn.setBounds(27, 494, 143, 27);
 		contentPane.add(btnReturn);
+		
+		lblRanking = new JLabel("Ranking: ");
+		lblRanking.setFont(new Font("SansSerif", Font.BOLD | Font.ITALIC, 15));
+		lblRanking.setBounds(27, 89, 277, 35);
+		contentPane.add(lblRanking);
+		
+		lblBalance = new JLabel("Balance: ");
+		lblBalance.setFont(new Font("SansSerif", Font.BOLD | Font.ITALIC, 15));
+		lblBalance.setBounds(359, 89, 277, 35);
+		contentPane.add(lblBalance);
 		tbtStocks.getColumnModel().getColumn(1).setPreferredWidth(97);
 	}
 }
