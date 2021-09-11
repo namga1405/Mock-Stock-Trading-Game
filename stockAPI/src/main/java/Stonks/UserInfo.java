@@ -112,12 +112,13 @@ public class UserInfo {
 	public static ArrayList<Integer> getnoBought(int i){
 		 ArrayList<Integer> stocks = new ArrayList<>();
 		 try{
-	        	//Connect to database, and then a query will be make to retrieve required information in table transaction so it could be put into the ranking table via accessor methods
+			//Connect to database, and then a query will be make to retrieve the number of stocks bought(unknown limit -> array list) by user with userID i to put on the table on profileScreen
 	            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 	            String query = "SELECT (noBought) FROM transaction WHERE UserID ='"+i+"'";
 	            Statement st = con.createStatement();
 	            ResultSet rs = st.executeQuery(query);
 	            while(rs.next()) {
+	            	//Turn it into variable types that could be read in Eclipse then adding into the array list
 	   	            	int noBought = rs.getInt("noBought");
 	   	            	stocks.add(noBought);    
 	            }
@@ -132,12 +133,13 @@ public class UserInfo {
 	public static ArrayList<Double> getCost(int i){
 		 ArrayList<Double> stocks = new ArrayList<>();
 		 try{
-	        	//Connect to database, and then a query will be make to retrieve required information in table transaction so it could be put into the ranking table via accessor methods
+			//Connect to database, and then a query will be make to buying price of stocks bought(unknown limit -> array list) by user with userID i to put on the table on profileScreen
 	            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 	            String query = "SELECT (Cost) FROM transaction WHERE UserID ='"+i+"'";
 	            Statement st = con.createStatement();
 	            ResultSet rs = st.executeQuery(query);
 	            while(rs.next()) {
+	            	//Turn it into variable types that could be read in Eclipse then adding into the array list
 	   	            	double cost = rs.getDouble("Cost");
 	   	            	stocks.add(cost);    
 	            }
@@ -152,7 +154,7 @@ public class UserInfo {
 	public static ArrayList<Double> getValue(int i){
 		 ArrayList<Double> stocks = new ArrayList<>();
 		 try{
-	        	//Connect to database, and then a query will be make to retrieve required information in table transaction so it could be put into the ranking table via accessor methods
+			//Connect to database, and then a query will be make to retrieve the current price of stocks bought(unknown limit -> array list) by user with userID i to put on the table on profileScreen
 	            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 	            String query = "SELECT (StockID) FROM transaction WHERE UserID ='"+i+"'";
 	            Statement st = con.createStatement();
@@ -163,6 +165,7 @@ public class UserInfo {
 	   	            Statement st2 = con.createStatement();
 	   	            ResultSet rs2 = st2.executeQuery(query2);
 	   	            while(rs2.next()) {
+	   	         	//Turn it into variable types that could be read in Eclipse then adding into the array list
 	   	            	double value = rs2.getDouble("Value");
 	   	            	stocks.add(value);    	
 	   	            }
@@ -178,7 +181,7 @@ public class UserInfo {
 	public static ArrayList<String> getStockname(int i){
 		 ArrayList<String> stocks = new ArrayList<>();
 		 try{
-	        	//Connect to database, and then a query will be make to retrieve required information in table transaction so it could be put into the ranking table via accessor methods
+	        	//Connect to database, and then a query will be make to retrieve the stocks bought(unknown limit -> array list) by user with userID i to put on the table on profileScreen
 	            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
 	            String query = "SELECT (StockID) FROM transaction WHERE UserID ='"+i+"'";
 	            Statement st = con.createStatement();
@@ -189,6 +192,7 @@ public class UserInfo {
 	   	            Statement st2 = con.createStatement();
 	   	            ResultSet rs2 = st2.executeQuery(query2);
 	   	            while(rs2.next()) {
+	   	         	//Turn it into variable types that could be read in Eclipse then adding into the array list
 	   	            	String stockname = rs2.getString("Name");
 	   	            	stocks.add(stockname);    	
 	   	            }
@@ -200,5 +204,45 @@ public class UserInfo {
 		 return stocks;
 	}
 	
+	public static int getRankfromID(int i){
+        int rank = 0;
+        try{
+        	//Connect to database, and then a query will be make to retrieve the ranking of user with userID i to put on proifle page
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+            String query = "SELECT Rank FROM ranking WHERE UserID='"+i+"'";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            UserInfo user;
+            while(rs.next()){
+            	//Turn it into variable types that could be read in Eclipse then adding into the array list
+            	rank = rs.getInt("Rank");
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        return rank;
+    }
 	
+	public static double getBalancefromID(int i){
+        double balance = 0;
+        try{
+        	//Connect to database, and then a query will be make to retrieve the balance from the table ranking to put on the profile page 
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+            String query = "SELECT Balance FROM ranking WHERE UserID='"+i+"'";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            UserInfo user;
+            while(rs.next()){
+            	//Turn it into variable types that could be read in Eclipse then adding into the array list
+            	balance= rs.getInt("Balance");
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        return balance;
+    }
 }
