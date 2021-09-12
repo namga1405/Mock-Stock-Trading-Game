@@ -33,9 +33,13 @@ public class SuccessScreen extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtQuantity;
 	private JLabel lblTimer;
-	String user;
+	private String username;
 	private ArrayList<String> storeStock;
 	private double exchangerate;
+	
+	public void storeName(String str) {
+		username = str;
+	}
 
 	/**
 	 * Launch the application.
@@ -225,6 +229,7 @@ public class SuccessScreen extends JFrame {
 					//Change to menu screen
 					setVisible(false);
 					menuScreen menu = new menuScreen();
+					menu.showName(username);
 					menu.setVisible(true);
 				}
 				catch(Exception exc) {
