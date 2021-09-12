@@ -25,6 +25,7 @@ public class menuScreen extends JFrame {
 	private JFrame exiting;
 	private JLabel lblshowUser;
 	private boolean chooseFrame;
+	private String username;
 
 
 
@@ -43,13 +44,17 @@ public class menuScreen extends JFrame {
 		});
 	}
 	
-	public String showName(String str) {
-		String s = str;
+	public void showName(String str) {
+		username = str;
 		String st = lblshowUser.getText();
 		lblshowUser.setText(st+": "+str);
-		return s;
+
 	}
 	
+	//Store the log-in name
+	public void storeName(String str) {
+		username = str;
+	}
 		
 	public boolean time() {
 		//Create a continuous running clock system
@@ -108,10 +113,12 @@ public class menuScreen extends JFrame {
 					chooseFrame = time();
 					if (chooseFrame != true) {
 					PurchaseFailScreen fail = new PurchaseFailScreen();
+					fail.storeName(username);
 					fail.setVisible(true);
 					}
 					else {
 						SuccessScreen success = new SuccessScreen();
+						success.storeName(username);
 						success.setVisible(true);
 					}
 				}
@@ -130,6 +137,7 @@ public class menuScreen extends JFrame {
 				try {
 					setVisible(false);
 					rankingScreen rank = new rankingScreen();
+					rank.storeName(username);
 					rank.setVisible(true);
 				}
 				catch(Exception exc) {
@@ -143,11 +151,43 @@ public class menuScreen extends JFrame {
 		btnProgression.setFont(new Font("SansSerif", Font.BOLD, 20));
 		btnProgression.setBounds(157, 304, 383, 49);
 		contentPane.add(btnProgression);
+		btnProgression.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					setVisible(false);
+					progressionScreen progress = new progressionScreen();
+					progress.showName(username);
+					int ID = UserInfo.getIDfromDB(username);
+					progress.retrieveInfo(ID);
+					progress.setVisible(true);				
+					}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}			
+				}
+				
+		});
 		
 		JButton btnProfile = new JButton("Profile");
 		btnProfile.setFont(new Font("SansSerif", Font.BOLD, 20));
 		btnProfile.setBounds(157, 404, 383, 49);
 		contentPane.add(btnProfile);
+		btnProfile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					setVisible(false);
+					profileScreen profile = new profileScreen();
+					profile.showName(username);
+					int ID = UserInfo.getIDfromDB(username);
+					profile.retrieveInfo(ID);
+					profile.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}			
+				}
+				
+		});
 		
 		
 		JButton btnExit = new JButton("Exit");
@@ -169,3 +209,4 @@ public class menuScreen extends JFrame {
 	}
 
 }
+
