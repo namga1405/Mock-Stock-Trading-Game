@@ -11,10 +11,7 @@ public class UserInfo {
 	private String user;
 	private int rank;
 	private double balance;
-	private String stockname;
-	private int noBought;
-	private double cost;
-	private double value;
+	private String date;
 	static ArrayList<UserInfo> User;
 	
 	//Create class
@@ -26,12 +23,6 @@ public class UserInfo {
 	        
 	    }
 	  
-	  public UserInfo(String stockname,int noBought, double cost, double value) {
-		  this.stockname = stockname;
-		  this.noBought = noBought;
-		  this.cost = cost;
-		  this.value = value;
-	  }
 	  
 	  //Set accessor method
 	  public int getId() {
@@ -49,22 +40,9 @@ public class UserInfo {
 	  public double getBalance() {
 		  return balance;
 	  }
+
 	  
-	  public String getStockname() {
-		  return stockname;
-	  }
-	  
-	  public int getNoBought() {
-		  return noBought;
-	  }
-	  
-	  public double getCost() {
-		  return cost;
-	  }
-	  
-	  public double getValue() {
-		  return value;
-	  }
+
 	//Method to set up a object to store the UserID, Username, Rank and Balance so it could be put on the table afterwards
 	public static ArrayList<UserInfo> UserList(){
         ArrayList<UserInfo> UserList = new ArrayList<>();
@@ -74,6 +52,7 @@ public class UserInfo {
             String query = "SELECT * FROM ranking";
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
+           //Create an instance of class Userinfo
             UserInfo user;
             while(rs.next()){
             	//Turn it into variable types that could be read in Eclipse then adding into the array list
@@ -87,6 +66,7 @@ public class UserInfo {
         
         return UserList;
     }
+		
 	
 	//Method to get the userID given the username 
 	public static int getIDfromDB(String username) {
@@ -245,4 +225,46 @@ public class UserInfo {
         
         return balance;
     }
+	
+	//Method to get the balance of userID i from the table progression
+	public static ArrayList<Double> getBalancefromProgression(int i){
+		 ArrayList<Double> storeBalance = new ArrayList<>();
+		 try{
+			//Connect to database, and then a query will be make to retrieve all the balance recorded(unknown limit -> array list) by user with userID i to put on the table on progressionScreen
+	            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+	            String query = "SELECT (Balance) FROM progression WHERE UserID ='"+i+"'";
+	            Statement st = con.createStatement();
+	            ResultSet rs = st.executeQuery(query);
+	            while(rs.next()) {
+	            	//Turn it into variable types that could be read in Eclipse then adding into the array list
+	   	            	double balance = rs.getDouble("Balance");
+	   	            	storeBalance.add(balance);
+	            }
+	}
+		 catch(Exception exc) {
+				exc.printStackTrace();
+			}
+		 return storeBalance;
+	}
+	
+	//Method to get the updated date for the balance of userID i from the table progression
+		public static ArrayList<String> getDatefromProgression(int i){
+			 ArrayList<String> storeDate = new ArrayList<>();
+			 try{
+				//Connect to database, and then a query will be make to retrieve all the updated date(unknown limit -> array list) by user with userID i to put on the table on progressionScreen
+		            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+		            String query = "SELECT (UpdatedDate) FROM progression WHERE UserID ='"+i+"'";
+		            Statement st = con.createStatement();
+		            ResultSet rs = st.executeQuery(query);
+		            while(rs.next()) {
+		            	//Turn it into variable types that could be read in Eclipse then adding into the array list
+		   	            	String date = rs.getString("UpdatedDate");
+		   	            	storeDate.add(date);
+		            }
+		}
+			 catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			 return storeDate;
+		}
 }
