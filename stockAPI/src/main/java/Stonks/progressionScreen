@@ -1,0 +1,136 @@
+package Stonks;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+
+public class progressionScreen extends JFrame {
+
+	private JPanel contentPane;
+	private JTable tbtProgression;
+	private JLabel lblUser;
+	private String username;
+	private ArrayList<Double> storeBalance;
+	private ArrayList<String> storeDate;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					progressionScreen frame = new progressionScreen();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void showName(String str) {
+		username = str;
+		String st = lblUser.getText();
+		lblUser.setText(st+": "+str);
+
+	}
+	
+	public void retrieveInfo(int ID) {
+		int i = ID;
+		storeBalance = UserInfo.getBalancefromProgression(i);
+		storeDate = UserInfo.getDatefromProgression(i);
+	}
+	
+	public void showTable(JTable table) {
+		 DefaultTableModel model = (DefaultTableModel)table.getModel();
+	        for(int i = 0; i < storeBalance.size(); i++){
+	           //Getting data to fill up the row by using accessor methods that are featured on UserInfo class
+	           double balance = storeBalance.get(i);
+	           String date = storeDate.get(i);
+	            
+	           Object tableData[] = {balance,date};
+	           model.addRow(tableData);
+	            
+	        }
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public progressionScreen() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 700, 600);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Progression");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
+		lblNewLabel.setBounds(32, 30, 253, 44);
+		contentPane.add(lblNewLabel);
+		
+		lblUser = new JLabel("User: ");
+		lblUser.setFont(new Font("SansSerif", Font.BOLD, 15));
+		lblUser.setBounds(32, 96, 253, 44);
+		contentPane.add(lblUser);
+		
+		JButton btnShow = new JButton("Show Table");
+		btnShow.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btnShow.setBounds(410, 109, 197, 31);
+		contentPane.add(btnShow);
+		btnShow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showTable(tbtProgression);	
+				}				
+		});
+		
+		JButton btnMenu = new JButton("Menu");
+		btnMenu.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btnMenu.setBounds(32, 496, 122, 31);
+		contentPane.add(btnMenu);
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					//Change to menu screen
+					setVisible(false);
+					menuScreen menu = new menuScreen();
+					menu.showName(username);
+					menu.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		});
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(34, 169, 603, 312);
+		contentPane.add(scrollPane);
+		
+		tbtProgression = new JTable();
+		scrollPane.setViewportView(tbtProgression);
+		tbtProgression.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Balance", "Updated Date"
+			}
+		));
+		tbtProgression.getColumnModel().getColumn(1).setPreferredWidth(77);
+	}
+}
