@@ -1,0 +1,154 @@
+package Stonks;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+
+public class startScreen extends JFrame {
+
+	private JPanel contentPane;
+	private JFrame frame;
+	//Set arraylist
+		 ArrayList<BigDecimal> USStocks = new ArrayList<BigDecimal>();
+		ArrayList<BigDecimal> FRStocks = new ArrayList<BigDecimal>();
+		 ArrayList<BigDecimal> AXStocks = new ArrayList<BigDecimal>();
+		ArrayList<String> USA = new ArrayList<String>();
+		ArrayList<String> France = new ArrayList<String>();
+		 ArrayList<String> Australia = new ArrayList<String>();
+		
+		
+		//Get + store stock prices for each country
+		public ArrayList<BigDecimal> getMultiple(ArrayList<String> symbols) throws IOException {
+		ArrayList<BigDecimal> StocksPrice = new ArrayList<BigDecimal>();
+		for (int i = 0; i < symbols.size(); i++) {
+			Stock stock = YahooFinance.get(symbols.get(i));
+			BigDecimal price = stock.getQuote().getPrice();
+			StocksPrice.add(price);
+		}
+
+		return StocksPrice;
+		}
+		
+
+		
+		public void addtoDatabase(ArrayList<String> symbols, ArrayList<BigDecimal> stocks, int ID) {
+			try {
+				//Connect to the database
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+				//Check to see whether there's already stocks of that name
+				Statement stmt = com.createStatement();
+				for (int i = 0; i < symbols.size(); i++) {
+				String checkStock = "SELECT * FROM stock WHERE Name='"+symbols.get(i)+"'";
+				ResultSet StockExist = stmt.executeQuery(checkStock);
+				if(StockExist.next()) {
+					//Update price for the stock
+					String queryUpdate = "UPDATE stock SET Value='"+stocks.get(i)+"' WHERE Name='"+symbols.get(i)+"'";
+					PreparedStatement pat = com.prepareStatement(queryUpdate);
+					pat.execute();
+					System.out.println("Prices updated");
+				}
+				else { 
+					//Add the stocks onto database
+					String queryAdd = "INSERT INTO stock(Name,MarketID,Value) values('"+symbols.get(i)+"','"+ID+"','"+stocks.get(i)+"')";
+					Statement sta = com.createStatement();
+					int x = sta.executeUpdate(queryAdd);
+					if (x == 0) {
+						System.out.println("Addition failed");
+					} else {
+						//Confirmation
+						System.out.println("Stock has been added");
+						}
+					}
+				}
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+			}
+		}
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					startScreen frame = new startScreen();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public startScreen() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Welcome to Stonk Rush");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
+		lblNewLabel.setBounds(46, 11, 572, 83);
+		contentPane.add(lblNewLabel);
+		
+		JButton btnStart = new JButton("Start");
+		btnStart.setBounds(149, 105, 89, 23);
+		contentPane.add(btnStart);
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					USA.add("NKE");
+			    	USA.add("GOOG");
+			    	USA.add("TSLA");
+			    	France.add("AIR.PA");
+			    	France.add("SAF.PA");
+			    	Australia.add("CBA.AX");
+			    	Australia.add("ANZ.AX");
+			    	//Add+Update the US stocks to the database
+					USStocks = getMultiple(USA);
+			    	addtoDatabase(USA,USStocks,1);
+			    	//Add+Update the French stocks to the database
+			    	FRStocks = getMultiple(France);
+			    	addtoDatabase(France,FRStocks,2);
+			    	//Add+Update the Australian stocks to the database
+			    	AXStocks = getMultiple(Australia);
+			    	addtoDatabase(Australia,AXStocks,3);
+			    	setVisible(false);
+					loginScreen login = new loginScreen();
+					login.frame.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}		
+				}		
+		});
+	}
+}
