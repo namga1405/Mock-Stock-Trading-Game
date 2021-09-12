@@ -21,7 +21,7 @@ public class PurchaseFailScreen extends JFrame {
 
 	private JPanel contentPane;
 	private JLabel lblTimer;
-	String user;
+	private String username;
 
 	/**
 	 * Launch the application.
@@ -39,6 +39,9 @@ public class PurchaseFailScreen extends JFrame {
 		});
 	}
 	
+	public void storeName(String str) {
+		username = str;
+	}
 	
 	//Set amount of time left to open the purchasing window
 	public void timeuntilOpening() {
@@ -122,6 +125,7 @@ public class PurchaseFailScreen extends JFrame {
 					//Change to menu screen
 					setVisible(false);
 					menuScreen menu = new menuScreen();
+					menu.showName(username);
 					menu.setVisible(true);
 				}
 				catch(Exception exc) {
