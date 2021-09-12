@@ -25,7 +25,7 @@ public class profileScreen extends JFrame {
 	private JPanel contentPane;
 	private JTable tbtStocks;
 	private JScrollPane scrollPane;
-	private JButton btnReturn;
+	private JButton btnRanking;
 	private JLabel lblUser;
 	private String username;
 	private int rank;
@@ -33,9 +33,10 @@ public class profileScreen extends JFrame {
 	private ArrayList<String> stockname;
 	private ArrayList<Double> value;
 	private ArrayList<Double> cost;
-	private  ArrayList<Integer> noBought;
+	private ArrayList<Integer> noBought;
 	private JLabel lblRanking;
 	private JLabel lblBalance;
+	private JButton btnMenu;
 	/**
 	 * Launch the application.
 	 */
@@ -55,11 +56,12 @@ public class profileScreen extends JFrame {
 	
 
 	public void showName(String str) {
-		String s = str;
+		username = str;
 		String st = lblUser.getText();
-		lblUser.setText(st+": "+str);
+		lblUser.setText(st+": "+username);
 
 	}
+	
 	
 	//Retrieve the name of stock, number of stock buy, current price and purchase price by a user and the ranking and balance of that user
 	public void retrieveInfo(int ID) {
@@ -73,6 +75,8 @@ public class profileScreen extends JFrame {
 		lblRanking.setText(lblRanking.getText()+" "+rank);
 		lblBalance.setText(lblBalance.getText()+" "+balance);
 	}
+	
+	
 
 	   public void showStocks(JTable table){
 	        DefaultTableModel model = (DefaultTableModel)table.getModel();
@@ -128,23 +132,6 @@ public class profileScreen extends JFrame {
 			}
 		));
 		
-		btnReturn = new JButton("Return");
-		btnReturn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					//Change to ranking screen
-					setVisible(false);
-					rankingScreen ranking = new rankingScreen();
-					ranking.setVisible(true);
-				}
-				catch(Exception exc) {
-					exc.printStackTrace();
-				}
-			}
-		});
-		btnReturn.setFont(new Font("SansSerif", Font.BOLD, 15));
-		btnReturn.setBounds(27, 494, 143, 27);
-		contentPane.add(btnReturn);
 		
 		lblRanking = new JLabel("Ranking: ");
 		lblRanking.setFont(new Font("SansSerif", Font.BOLD | Font.ITALIC, 15));
@@ -155,6 +142,25 @@ public class profileScreen extends JFrame {
 		lblBalance.setFont(new Font("SansSerif", Font.BOLD | Font.ITALIC, 15));
 		lblBalance.setBounds(359, 89, 277, 35);
 		contentPane.add(lblBalance);
+		
+		btnMenu = new JButton("Menu");
+		btnMenu.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btnMenu.setBounds(493, 494, 143, 27);
+		contentPane.add(btnMenu);
 		tbtStocks.getColumnModel().getColumn(1).setPreferredWidth(97);
+		btnMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					//Change to menu screen
+					setVisible(false);
+					menuScreen menu = new menuScreen();
+					menu.showName(username);
+					menu.setVisible(true);
+				}
+				catch(Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		});
 	}
 }
