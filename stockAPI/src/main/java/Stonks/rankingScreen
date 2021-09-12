@@ -27,6 +27,7 @@ public class rankingScreen extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
+	private String username;
 
 	/**
 	 * Launch the application.
@@ -42,6 +43,10 @@ public class rankingScreen extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public void storeName(String str) {
+		username = str;
 	}
 
     public void ShowRank(JTable table){
@@ -112,6 +117,7 @@ public class rankingScreen extends JFrame {
 					//Change to menu screen
 					setVisible(false);
 					menuScreen menu = new menuScreen();
+					menu.showName(username);
 					menu.setVisible(true);
 				}
 				catch(Exception exc) {
@@ -132,7 +138,8 @@ public class rankingScreen extends JFrame {
 					int ID = Integer.parseInt(table.getValueAt(row,2).toString());
 					//Change to profile screen
 					setVisible(false);
-					profileScreen profile = new profileScreen();
+					profileotherScreen profile = new profileotherScreen();
+					profile.storeName(username);
 					profile.showName(user);
 					profile.retrieveInfo(ID);
 					profile.setVisible(true);
@@ -145,3 +152,4 @@ public class rankingScreen extends JFrame {
 
 	}
 }
+
