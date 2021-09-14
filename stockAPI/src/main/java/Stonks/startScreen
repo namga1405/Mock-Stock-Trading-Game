@@ -21,7 +21,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JButton;
 
@@ -30,12 +32,15 @@ public class startScreen extends JFrame {
 	private JPanel contentPane;
 	private JFrame frame;
 	//Set arraylist
-		 ArrayList<BigDecimal> USStocks = new ArrayList<BigDecimal>();
+		ArrayList<BigDecimal> USStocks = new ArrayList<BigDecimal>();
 		ArrayList<BigDecimal> FRStocks = new ArrayList<BigDecimal>();
-		 ArrayList<BigDecimal> AXStocks = new ArrayList<BigDecimal>();
+		ArrayList<BigDecimal> AXStocks = new ArrayList<BigDecimal>();
 		ArrayList<String> USA = new ArrayList<String>();
 		ArrayList<String> France = new ArrayList<String>();
-		 ArrayList<String> Australia = new ArrayList<String>();
+		ArrayList<String> Australia = new ArrayList<String>();
+		ArrayList<Integer> UserIDlist = new ArrayList<Integer>();
+		ArrayList<Double> Balancelist = new ArrayList<Double>();
+		 
 		
 		
 		//Get + store stock prices for each country
@@ -50,6 +55,27 @@ public class startScreen extends JFrame {
 		return StocksPrice;
 		}
 		
+		//Method to get the current date in the form yyyy/MM/dd
+		public String getDate() {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			Date date = new Date();
+			String time = sdf.format(date);
+			return time;
+		}
+		
+		//Method to get the current day of week
+		public int getDayofWeek() {
+			Date date = new Date();
+			int day = date.getDay();
+			return day;
+		}
+		
+		//Method to get the current hour
+		public int getHour() {
+			Date date = new Date();
+			int hour = date.getHours();
+			return hour;
+		}
 
 		
 		public void addtoDatabase(ArrayList<String> symbols, ArrayList<BigDecimal> stocks, int ID) {
@@ -87,6 +113,89 @@ public class startScreen extends JFrame {
 				exception.printStackTrace();
 			}
 		}
+		
+		//Method to update the rank with the knowing balance
+		public void updateRank(Double[] balance) {
+			try {
+			//Connect to the database
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+			for (int i = 0; i < balance.length; i++) {
+				int rank = i+1;
+				//Update the rank with the corresponding array(which has been sorted descendingly)
+				String update = "UPDATE ranking SET Rank='"+rank+"' WHERE Balance='"+balance[i]+"'";
+				PreparedStatement pat = com.prepareStatement(update);
+				pat.execute();
+			}
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+			}
+		}
+		
+		//Method to add a progression row
+		public void addProgressiontoDB(double balance, String date, int ID) {
+			try {
+				//Connect to the database
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+				//Insert all of the data to the progression table
+				String addProgression = "INSERT INTO progression(Balance,UpdatedDate,UserID) values('"+balance+"','"+date+"','"+ID+"')";
+				Statement stmt = com.createStatement();
+				int i = stmt.executeUpdate(addProgression);
+				if (i == 0) {
+					System.out.println("Addition failed");
+				} else {
+					//Confirmation
+					System.out.println("Progression has been added");
+					}
+				
+		}
+			catch (Exception exception) {
+				exception.printStackTrace();
+			}
+			}
+		
+		//Find the new total of their purchase with the new stock value
+		public double getCurrentRevenue(int i) {
+			double total = 0;
+			ArrayList<Double> price = UserInfo.getValue(i);
+			ArrayList<Integer> noBought = UserInfo.getnoBought(i);
+			for (int x = 0; x < price.size(); x++) {
+				double add = price.get(x)*noBought.get(x);
+				total = total + add;
+			}
+			
+			
+			return total;
+		}
+		
+		//Selection sorting algorithm
+		public Double[] sort(Double[] balanceArray) {
+			int n = balanceArray.length;
+			double temp = 0;
+			int minPos = 0;
+			
+			for (int i = 0; i < n-1; i++) {
+				minPos = i;
+				for (int x = i+1; x < n; x++) {
+					if (balanceArray[x] > balanceArray[minPos]) {
+						minPos = x;
+					}
+				}
+				temp = balanceArray[i];
+				balanceArray[i] = balanceArray[minPos];
+				balanceArray[minPos] = temp;
+			}
+			return balanceArray;
+		}
+		
+		//Convert array list to array to put into combo box
+		private Double[] convertArray(ArrayList<Double> a) {
+			Double[] array = a.toArray(new Double[0]);
+			return array;
+		}
+		
 	/**
 	 * Launch the application.
 	 */
@@ -125,6 +234,15 @@ public class startScreen extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					//Minus the balance with the cost of all of the users' purchase in order to avoid doubling down adding new value
+					for (int i = 0; i < UserIDlist.size(); i++) {
+						int ID = UserIDlist.get(i);
+						double addon = getCurrentRevenue(ID);
+						double currentBalance = UserInfo.getBalancefromID(ID);
+						double newBalance = currentBalance-addon;
+			    		UserInfo.updateBalancetoRanking(ID,newBalance);	
+					}
+					
 					USA.add("NKE");
 			    	USA.add("GOOG");
 			    	USA.add("TSLA");
@@ -141,6 +259,33 @@ public class startScreen extends JFrame {
 			    	//Add+Update the Australian stocks to the database
 			    	AXStocks = getMultiple(Australia);
 			    	addtoDatabase(Australia,AXStocks,3);
+			    	
+			    	//For each user, in a for loop, the new balance will be updated to the ranking table
+			    	UserIDlist = UserInfo.UserIDlist();
+			    	for (int i = 0; i < UserIDlist.size(); i++) {
+			    		int ID = UserIDlist.get(i);
+			    		double addon = getCurrentRevenue(ID);
+			    		double currentBalance = UserInfo.getBalancefromID(ID);
+			    		double newBalance = currentBalance+addon;
+			    		UserInfo.updateBalancetoRanking(ID,newBalance);
+			    		String date = getDate();
+			    		int day = getDayofWeek();
+			    		int hour = getHour();
+			    		//For each week, there will be a new row of progression updated to the progression table
+			    		if (day == 1 && hour == 16) {
+			    			addProgressiontoDB(newBalance,date,ID);
+			    		}
+				}
+			    	//Create and arraylist to store all of the balance from the ranking
+					Balancelist = UserInfo.collectAllBalance();
+					Double[] BalanceArray = convertArray(Balancelist);
+					//Sort the array, which are the converted version of the arraylist
+					BalanceArray = sort(BalanceArray);
+					//Change the rank of the user according to their new balance
+					updateRank(BalanceArray);
+					
+
+			    	//CHange to log in menu
 			    	setVisible(false);
 					loginScreen login = new loginScreen();
 					login.frame.setVisible(true);
