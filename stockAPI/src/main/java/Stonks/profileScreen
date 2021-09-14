@@ -128,7 +128,7 @@ public class profileScreen extends JFrame {
 			new Object[][] {
 			},
 			new String[] {
-				"Stocks", "Stocks bought", "Purchased Price", "Current Price"
+				"Stocks", "Stocks bought", "Purchased Price (in $)", "Current Price (in $)"
 			}
 		));
 		
