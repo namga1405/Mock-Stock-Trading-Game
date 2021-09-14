@@ -199,14 +199,9 @@ public class menuScreen extends JFrame {
 				//Exit the program
 				exiting = new JFrame("exit");
 				if(JOptionPane.showConfirmDialog(exiting, "Confirm if you want to exit","Stonk Rush",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION) {
-					System.exit(0);
-				
-				}
-				
+					System.exit(0);		
+				}		
 			}
 		});
-		
 	}
-
 }
-
