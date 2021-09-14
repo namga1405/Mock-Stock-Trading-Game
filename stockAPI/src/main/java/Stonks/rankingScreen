@@ -93,7 +93,7 @@ public class rankingScreen extends JFrame {
 			new Object[][] {
 			},
 			new String[] {
-					"Rank", "Username", "UserID", "Balance"
+					"Rank", "Username", "UserID", "Balance (in $)"
 			}
 		));
 		
@@ -152,4 +152,5 @@ public class rankingScreen extends JFrame {
 
 	}
 }
+
 
