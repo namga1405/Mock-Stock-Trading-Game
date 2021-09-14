@@ -128,9 +128,10 @@ public class progressionScreen extends JFrame {
 			new Object[][] {
 			},
 			new String[] {
-				"Balance", "Updated Date"
+				"Balance (in $)", "Updated Date"
 			}
 		));
 		tbtProgression.getColumnModel().getColumn(1).setPreferredWidth(77);
 	}
 }
+
