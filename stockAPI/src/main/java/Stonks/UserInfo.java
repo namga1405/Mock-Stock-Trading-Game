@@ -2,6 +2,7 @@ package Stonks;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.sql.Statement;
@@ -88,6 +89,25 @@ public class UserInfo {
 		 	return ID;
 	}
 	
+	public static int getStockIDfromDB(String stockname) {
+		 int ID = 0;
+		 try{
+	        	//Connect to database, and then a query will be make to retrieve the userID of the chosen user from the table user
+	            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+	            String query = "SELECT StockID FROM stock WHERE Name='"+stockname+"'";
+	            Statement st = con.createStatement();
+	            ResultSet rs = st.executeQuery(query);
+	            while(rs.next()){
+	            	//Turn it into variable types that could be read in Eclipse then adding into the array list
+	            	ID = rs.getInt("Name");
+	            }
+	        }
+	        catch(Exception e){
+	            e.printStackTrace();
+	        }
+		 	return ID;
+	}	
+	
 	//Method to get the number of stock bought in a transaction that a user with an ID i bought
 	public static ArrayList<Integer> getnoBought(int i){
 		 ArrayList<Integer> stocks = new ArrayList<>();
@@ -131,7 +151,7 @@ public class UserInfo {
 	}
 	
 	//Method to get the current value of a stock that a user with an ID i bought
-	public static ArrayList<Double> getValue(int i){
+	public static ArrayList<Double> getValue(int i){ 
 		 ArrayList<Double> stocks = new ArrayList<>();
 		 try{
 			//Connect to database, and then a query will be make to retrieve the current price of stocks bought(unknown limit -> array list) by user with userID i to put on the table on profileScreen
@@ -266,5 +286,62 @@ public class UserInfo {
 					exc.printStackTrace();
 				}
 			 return storeDate;
+		}
+		
+		public static ArrayList<Integer> UserIDlist() {
+			ArrayList<Integer> IDList = new ArrayList<>();
+			 try{
+					//Connect to database, and then a query will be make to retrieve all the updated date(unknown limit -> array list) by user with userID i to put on the table on progressionScreen
+			            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+			            String query = "SELECT UserID FROM user";
+			            Statement st = con.createStatement();
+			            ResultSet rs = st.executeQuery(query);
+			            while(rs.next()) {
+			            	//Turn it into variable types that could be read in Eclipse then adding into the array list
+			   	            	int ID = rs.getInt("UserID");
+			   	            	IDList.add(ID);
+			            }
+			}
+				 catch(Exception exc) {
+						exc.printStackTrace();
+					}
+			return IDList;
+		}
+		
+		public static void updateBalancetoRanking(int ID, double balance) {
+			try {
+				//Connect to the database
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+				Statement stmt = com.createStatement();
+				//Update the balance in the ranking table of UserID ID
+				String Update = "UPDATE ranking SET Balance='"+balance+"' WHERE UserID='"+ID+"'";
+				PreparedStatement pat = com.prepareStatement(Update);
+				pat.execute();
+			}
+			catch(Exception exc) {
+				exc.printStackTrace();
+			}
+		}
+		
+		public static ArrayList<Double> collectAllBalance() {
+			ArrayList<Double> balance = new ArrayList<>();
+			try {
+				//Connect to the database
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/stocks","root","root");
+				Statement stmt = com.createStatement();
+				//Retrieve the current balance of all user in the database from the table ranking to an arraylist
+				String getBalance = "SELECT Balance FROM ranking";
+				ResultSet rs = stmt.executeQuery(getBalance);
+				while (rs.next()) {
+					double bal = rs.getDouble("Balance");
+					balance.add(bal);
+				}
+			}
+			catch (Exception exception) {
+				exception.printStackTrace();
+			}
+			return balance;
 		}
 }
