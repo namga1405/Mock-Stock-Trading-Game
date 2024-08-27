@@ -1,0 +1,1 @@
+This is a mock stock trading program taking the stocks API from Yahoo Finance, as an Internal Assessment for Computer Science (2020). This program is designed to help users practice stock trading skills and see the trends of some major stocks live.
